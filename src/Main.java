@@ -30,24 +30,24 @@ public class Main {
 
     //非递归算法
     private static int f(int floor, int eggs) {
-        int[][] temp = new int[floor][eggs];
-        for (int i = 0; i < floor; i++) {
-            for (int j = 0; j < eggs; j++) {
-                if (0 == i) {
+        int[][] temp = new int[floor+1][eggs+1];
+        for (int m = 1; m <= floor; m++) {
+            for (int n = 1; n <= eggs; n++) {
+                if (1 == m) {
                     //f(1,n) = 1
-                    temp[i][j] = 1;
-                } else if (0 == j) {
+                    temp[m][n] = 1;
+                } else if (1 == n) {
                     //f(m,1) = m，这里+1是因为代码中是数组从零开始计数的
-                    temp[i][j] = i + 1;
+                    temp[m][n] = m + 1;
                 } else {
                     //f(m,n)=min(1+max(f(m-x,n-1),f(x-1,n)))
-                    temp[i][j] = 1 + Math.max(temp[i - 1][j - 1], temp[0][j]);
-                    for (int k = 2; k <= i; k++) {
-                        temp[i][j] = Math.min(temp[i][j], 1 + Math.max(temp[i - k][j - 1], temp[k - 1][j]));
+                    temp[m][n] = Integer.MAX_VALUE;
+                    for (int k = 1; k <= m; k++) {
+                        temp[m][n] = Math.min(temp[m][n], 1 + Math.max(temp[m - k][n - 1], temp[k - 1][n]));
                     }
                 }
             }
         }
-        return temp[floor - 1][eggs - 1];
+        return temp[floor][eggs];
     }
 }
