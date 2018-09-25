@@ -2,52 +2,94 @@ import java.util.*;
 
 public class Main {
     static public void main(String[] arg) {
-        HashMap<String, Integer> hashMap = new HashMap<>();
-        System.out.println(f(3, 2));
+        int[][] hrd = new int[][]{{4, 6, 1}
+                , {8, 3, 7}
+                , {2, 5, 0}};
+        List<String> cache = new ArrayList<>();
+        String result = "";
+        System.out.print(getHrD(hrd, cache, result));
+
     }
 
-    //备忘录算法解题
-    private static int f(int floor, int eggs, HashMap<String, Integer> hashMap) {
-        if (floor == 1) {
-            return 1;
-        } else if (eggs == 1) {
-            return floor;
-        } else if (hashMap.containsKey(floor + "_" + eggs)) {
-            return hashMap.get(floor + "_" + eggs);
-        } else {
-            int temp = -1;
-            for (int i = 2; i <= floor; i++) {
-                if (temp == -1) {
-                    temp = 1 + Math.max(f(floor - i, eggs - 1, hashMap), f(i - 1, eggs, hashMap));
-                } else {
-                    temp = Math.min(1 + Math.max(f(floor - i, eggs - 1, hashMap), f(i - 1, eggs, hashMap)), temp);
-                }
-            }
-            hashMap.put(floor + "_" + eggs, temp);
-            return temp;
+    private static String getHrD(int[][] hrd, List<String> cache, String result) {
+        if (hrd == new int[][]{{1, 2, 3}
+                , {4, 5, 6}
+                , {7, 8, 9}}) {
+            return result;
         }
-    }
-
-    //非递归算法
-    private static int f(int floor, int eggs) {
-        int[][] temp = new int[floor+1][eggs+1];
-        for (int m = 1; m <= floor; m++) {
-            for (int n = 1; n <= eggs; n++) {
-                if (1 == m) {
-                    //f(1,n) = 1
-                    temp[m][n] = 1;
-                } else if (1 == n) {
-                    //f(m,1) = m，这里+1是因为代码中是数组从零开始计数的
-                    temp[m][n] = m + 1;
-                } else {
-                    //f(m,n)=min(1+max(f(m-x,n-1),f(x-1,n)))
-                    temp[m][n] = Integer.MAX_VALUE;
-                    for (int k = 1; k <= m; k++) {
-                        temp[m][n] = Math.min(temp[m][n], 1 + Math.max(temp[m - k][n - 1], temp[k - 1][n]));
+        for (int i = 0; i < hrd.length; i++) {
+            for (int j = 0; j < hrd[i].length; j++) {
+                if (hrd[i][j] == 0) {
+                    if (i > 0) {
+                        int[][] temp = arraycopy(hrd);
+                        temp[i][j] = temp[i - 1][j];
+                        temp[i - 1][j] = 0;
+                        String tempString = getStringData(temp);
+                        if (!cache.contains(tempString)) {
+                            cache.add(tempString);
+                            result = getHrD(temp, cache, result + temp[i][j] + "->");
+                        }
                     }
+                    if (j > 0) {
+                        int[][] temp = arraycopy(hrd);
+                        temp[i][j] = temp[i][j - 1];
+                        temp[i][j - 1] = 0;
+                        String tempString = getStringData(temp);
+                        if (!cache.contains(tempString)) {
+                            cache.add(tempString);
+                            result = getHrD(temp, cache, result + temp[i][j] + "->");
+                        }
+                    }
+                    if (i < hrd.length - 1) {
+                        int[][] temp = arraycopy(hrd);
+                        temp[i][j] = temp[i + 1][j];
+                        temp[i + 1][j] = 0;
+                        String tempString = getStringData(temp);
+                        if (!cache.contains(tempString)) {
+                            cache.add(tempString);
+                            result = getHrD(temp, cache, result + temp[i][j] + "->");
+                        }
+                    }
+                    if (j < hrd[i].length - 1) {
+                        int[][] temp = arraycopy(hrd);
+                        temp[i][j] = temp[i][j + 1];
+                        temp[i][j + 1] = 0;
+                        String tempString = getStringData(temp);
+                        if (!cache.contains(tempString)) {
+                            cache.add(tempString);
+                            result = getHrD(temp, cache, result + temp[i][j] + "->");
+                        } else {
+                            return result;
+                        }
+                    }
+                    return result;
                 }
             }
         }
-        return temp[floor][eggs];
+        return result;
+    }
+
+    private static int[][] arraycopy(int[][] hrd) {
+        int[][] temp = new int[hrd.length][];
+        for (int i = 0; i < hrd.length; i++) {
+            temp[i] = new int[hrd[i].length];
+            for (int j = 0; j < hrd[i].length; j++) {
+                temp[i][j] = hrd[i][j];
+            }
+        }
+        return temp;
+    }
+
+    private static String getStringData(int[][] data) {
+
+        StringBuilder result = new StringBuilder();
+        for (int[] aData : data) {
+            for (int anAData : aData) {
+                result.append(",").append(anAData);
+            }
+        }
+        return result.toString();
     }
 }
+
+
