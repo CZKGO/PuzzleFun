@@ -1,5 +1,8 @@
 import java.util.HashMap;
 
+/**
+ * 谷歌扔鸡蛋算法
+ */
 public class Eggs {
     //备忘录算法解题
     private static int f(int floor, int eggs, HashMap<String, Integer> hashMap) {
